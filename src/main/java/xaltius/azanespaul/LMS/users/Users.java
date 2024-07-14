@@ -20,6 +20,7 @@ public class Users implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Getter(AccessLevel.NONE)

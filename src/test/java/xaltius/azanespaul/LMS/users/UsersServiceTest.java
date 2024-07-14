@@ -53,10 +53,17 @@ class UsersServiceTest {
     @Test
     void testSaveUserSuccess() {
         // Given
+        Users u = new Users();
+        u.setId(1L);
+        u.setName("Test Case");
 
         // When
+        usersService.saveUser(u);
 
         // Then
+        Assertions.assertThat(u).isNotNull();
+        Assertions.assertThat(u.getId()).isGreaterThan(0);
+        Mockito.verify(usersRepository, Mockito.times(1)).save(u);
     }
 
     @Test
