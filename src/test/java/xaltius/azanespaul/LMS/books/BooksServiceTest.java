@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import xaltius.azanespaul.LMS.books.exceptions.BooksAlreadyBorrowedException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksNotFoundException;
 import xaltius.azanespaul.LMS.users.Users;
 import xaltius.azanespaul.LMS.users.UsersNotFoundException;
@@ -126,6 +127,20 @@ class BooksServiceTest {
         Assertions.assertThat(actualBooks.getAuthor()).isEqualTo(b.getAuthor());
         Assertions.assertThat(actualBooks.getBorrowed()).isEqualTo(b.getBorrowed());
         Assertions.assertThat(actualBooks.getBorrowedBy()).isEqualTo(b.getBorrowedBy());
+        Mockito.verify(booksRepository, Mockito.times(1)).findBooksById(1L);
+    }
+
+    @Test
+    void testFindBooksByIdNotFound() {
+        // Given
+        BDDMockito.given(booksRepository.findBooksById(1L)).willReturn(Optional.empty());
+
+        // When
+        assertThrows(BooksNotFoundException.class, () -> {
+            booksService.findBooksById(1L);
+        });
+
+        // Then
         Mockito.verify(booksRepository, Mockito.times(1)).findBooksById(1L);
     }
 
@@ -256,6 +271,37 @@ class BooksServiceTest {
 
         // Then
         Mockito.verify(usersRepository, Mockito.times(1)).findUsersById(1L);
+    }
+
+    @Test
+    void testBorrowBooksByIdAlreadyBorrowed() {
+        // Given
+        Users currentBorrower = new Users();
+        currentBorrower.setId(1L);
+        currentBorrower.setName("Name Test Case");
+
+        Books borrowedBook = new Books();
+        borrowedBook.setId(1L);
+        borrowedBook.setTitle("Title Test Case");
+        borrowedBook.setAuthor("Author Test Case");
+        borrowedBook.setBorrowed(true);
+        borrowedBook.setBorrowedBy(currentBorrower);
+
+        Users newBorrower = new Users();
+        newBorrower.setId(2L);
+        newBorrower.setName("Name 2 Test Case");
+
+        BDDMockito.given(booksRepository.findBooksById(1L)).willReturn(Optional.of(borrowedBook));
+        BDDMockito.given(usersRepository.findUsersById(2L)).willReturn(Optional.of(newBorrower));
+
+        // When
+        assertThrows(BooksAlreadyBorrowedException.class, () -> {
+            booksService.borrowBooksById(1L, 2L);
+        });
+
+        // Then
+        Mockito.verify(booksRepository, Mockito.times(1)).findBooksById(borrowedBook.getId());
+        Mockito.verify(usersRepository, Mockito.times(1)).findUsersById(newBorrower.getId());
     }
 
     @Test

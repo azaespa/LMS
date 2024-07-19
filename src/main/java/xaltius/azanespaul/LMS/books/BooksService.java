@@ -31,7 +31,8 @@ public class BooksService {
     }
 
     public Books findBooksById(Long id) {
-        return booksRepository.findBooksById(id).get();
+        return booksRepository.findBooksById(id)
+                .orElseThrow(() -> new BooksNotFoundException(id.toString()));
     }
 
     public Books updateBooksById(Books updatedBooks, Long id) {
