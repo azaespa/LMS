@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import xaltius.azanespaul.LMS.books.exceptions.BooksAlreadyBorrowedException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksNotFoundException;
-import xaltius.azanespaul.LMS.users.UsersNotFoundException;
+import xaltius.azanespaul.LMS.users.exceptions.UsersNotFoundException;
 
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {

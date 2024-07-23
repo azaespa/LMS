@@ -14,8 +14,9 @@ public class BooksController {
     private BooksService booksService;
 
     @PostMapping("/api/books")
-    public Books saveBooks(@RequestBody Books books) {
-        return booksService.saveBooks(books);
+    public Result saveBooks(@RequestBody Books books) {
+        Books savedBooks = booksService.saveBooks(books);
+        return new Result(HttpStatus.OK.value(), "Save One Success", savedBooks);
     }
 
     @GetMapping("/api/books")
@@ -48,7 +49,8 @@ public class BooksController {
     }
 
     @PostMapping("/api/books/{bookId}/return")
-    public Books returnBooksById(@PathVariable Long bookId) {
-        return booksService.returnBooksById(bookId);
+    public Result returnBooksById(@PathVariable Long bookId) {
+        Books returnedBooks = booksService.returnBooksById(bookId);
+        return new Result(HttpStatus.OK.value(), "Returned One Success", returnedBooks);
     }
 }

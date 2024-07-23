@@ -1,6 +1,5 @@
 package xaltius.azanespaul.LMS.books;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsNull;
@@ -14,21 +13,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import xaltius.azanespaul.LMS.books.exceptions.BooksAlreadyBorrowedException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksNotFoundException;
 import xaltius.azanespaul.LMS.users.Users;
-import xaltius.azanespaul.LMS.users.UsersNotFoundException;
-import xaltius.azanespaul.LMS.users.UsersService;
+import xaltius.azanespaul.LMS.users.exceptions.UsersNotFoundException;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -87,12 +81,27 @@ class BooksControllerTest {
         body.put("borrowed", false);
         body.put("borrowedBy", null);
 
+        Books savedBooks = new Books();
+        savedBooks.setId(1L);
+        savedBooks.setTitle("Title Test Case");
+        savedBooks.setAuthor("Author Test Case");
+        savedBooks.setBorrowed(false);
+        savedBooks.setBorrowedBy(null);
+
+        BDDMockito.given(this.booksService.saveBooks(Mockito.any(Books.class))).willReturn(savedBooks);
+
         // When and Then
         this.mockMvc.perform(MockMvcRequestBuilders.post("/api/books")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(new ObjectMapper().writeValueAsString(body))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Save One Success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value(savedBooks.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value(savedBooks.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value(savedBooks.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(savedBooks.getBorrowed()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").isEmpty());
     }
 
     @Test
@@ -229,7 +238,7 @@ class BooksControllerTest {
     }
 
     @Test
-    void borrowBooksById() throws Exception {
+    void testBorrowBooksByIdSuccess() throws Exception {
         //Given
         Map<String, Object> usersBody = new HashMap<>();
         usersBody.put("id", 1L);
@@ -351,8 +360,56 @@ class BooksControllerTest {
     }
 
     @Test
-    void returnBooksById() {
+    void testReturnBooksByIdSuccess() throws Exception {
+        // Given
+        Map<String, Object> body = new HashMap<>();
+        body.put("id", 1L);
+        body.put("title", "Title Test Case");
+        body.put("author", "Author Test Case");
+        body.put("borrowed", false);
+        body.put("borrowedBy", null);
+
+        Books returnedBooks = new Books();
+        returnedBooks.setId(1L);
+        returnedBooks.setTitle("Title Test Case");
+        returnedBooks.setAuthor("Author Test Case");
+        returnedBooks.setBorrowed(false);
+        returnedBooks.setBorrowedBy(null);
+
+        BDDMockito.given(this.booksService.returnBooksById(eq(1L))).willReturn(returnedBooks);
+
+        // When and Then
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/books/1/return")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(body))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Returned One Success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value(returnedBooks.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value(returnedBooks.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value(returnedBooks.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(returnedBooks.getBorrowed()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").isEmpty());
     }
+    @Test
+    void testReturnBooksByIdNotFound() throws Exception {
+        // Given
+        Map<String, Object> body = new HashMap<>();
+        body.put("id", 1L);
+        body.put("title", "Title Test Case");
+        body.put("author", "Author Test Case");
+        body.put("borrowed", false);
+        body.put("borrowedBy", null);
 
+        BDDMockito.given(this.booksService.returnBooksById(eq(1L))).willThrow(new BooksNotFoundException("1"));
 
+        // When and Then
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/books/1/return")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(body))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+    }
 }

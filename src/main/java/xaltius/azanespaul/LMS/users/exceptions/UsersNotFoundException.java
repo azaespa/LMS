@@ -1,4 +1,4 @@
-package xaltius.azanespaul.LMS.users;
+package xaltius.azanespaul.LMS.users.exceptions;
 
 public class UsersNotFoundException extends RuntimeException {
     public UsersNotFoundException(String id) {

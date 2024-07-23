@@ -7,7 +7,7 @@ import xaltius.azanespaul.LMS.books.exceptions.BooksAlreadyBorrowedException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksNotFoundException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksUpdateErrorException;
 import xaltius.azanespaul.LMS.users.Users;
-import xaltius.azanespaul.LMS.users.UsersNotFoundException;
+import xaltius.azanespaul.LMS.users.exceptions.UsersNotFoundException;
 import xaltius.azanespaul.LMS.users.UsersRepository;
 
 import java.util.List;

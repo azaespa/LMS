@@ -10,9 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import xaltius.azanespaul.LMS.users.exceptions.UsersNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -77,5 +81,37 @@ class UsersServiceTest {
         // Then
         Assertions.assertThat(actualUsersList.size()).isEqualTo(this.usersList.size());
         Mockito.verify(usersRepository, Mockito.times(1)).findAll();
+    }
+
+    @Test
+    void testFindUsersByIdSuccess() {
+        // Given
+        Users u1 = new Users();
+        u1.setId(1L);
+        u1.setName("Rakesh Kumar");
+
+        BDDMockito.given(usersRepository.findUsersById(1L)).willReturn(Optional.of(u1));
+
+        // When
+        Users actualUser = usersService.findUsersById(1L);
+
+        // Then
+        Assertions.assertThat(actualUser.getId()).isEqualTo(u1.getId());
+        Assertions.assertThat(actualUser.getName()).isEqualTo(u1.getName());
+        Mockito.verify(usersRepository, Mockito.times(1)).findUsersById(1L);
+    }
+
+    @Test
+    void testFindUsersByIdNotFound() {
+        // Given
+        BDDMockito.given(usersRepository.findUsersById(1L)).willReturn(Optional.empty());
+
+        // When
+        assertThrows(UsersNotFoundException.class, () -> {
+            usersService.findUsersById(1L);
+        });
+
+        // Then
+        Mockito.verify(usersRepository, Mockito.times(1)).findUsersById(1L);
     }
 }
