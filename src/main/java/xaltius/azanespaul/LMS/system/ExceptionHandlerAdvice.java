@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import xaltius.azanespaul.LMS.books.exceptions.BooksAlreadyBorrowedException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksNotFoundException;
+import xaltius.azanespaul.LMS.books.exceptions.BooksUpdateErrorException;
 import xaltius.azanespaul.LMS.users.exceptions.UsersNotFoundException;
 
 @RestControllerAdvice
@@ -30,6 +31,12 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(BooksAlreadyBorrowedException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public Result handleBooksAlreadyBorrowedException(BooksAlreadyBorrowedException ex) {
+        return new Result(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null);
+    }
+
+    @ExceptionHandler(BooksUpdateErrorException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Result handleBooksUpdateErrorException (BooksUpdateErrorException ex) {
         return new Result(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null);
     }
 }

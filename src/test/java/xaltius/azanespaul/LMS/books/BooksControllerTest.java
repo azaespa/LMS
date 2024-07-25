@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import xaltius.azanespaul.LMS.books.exceptions.BooksAlreadyBorrowedException;
 import xaltius.azanespaul.LMS.books.exceptions.BooksNotFoundException;
+import xaltius.azanespaul.LMS.books.exceptions.BooksUpdateErrorException;
 import xaltius.azanespaul.LMS.users.Users;
 import xaltius.azanespaul.LMS.users.exceptions.UsersNotFoundException;
 
@@ -210,6 +211,29 @@ class BooksControllerTest {
                         .content(new ObjectMapper().writeValueAsString(body))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+
+    }
+
+    @Test
+    void testUpdateBooksByIdUpdateError() throws Exception {
+        //Given
+        Map<String, Object> body = new HashMap<>();
+        body.put("id", 1L);
+        body.put("title", "Updated Title Test Case");
+        body.put("author", "Updated Author Test Case");
+        body.put("borrowed", true);
+        body.put("borrowedBy", null);
+
+        BDDMockito.given(this.booksService.updateBooksById(Mockito.any(Books.class), eq(1L))).willThrow(new BooksUpdateErrorException());
+
+        // When and Then
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/books/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(body))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("You cannot update other properties except Title and Author"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
 
