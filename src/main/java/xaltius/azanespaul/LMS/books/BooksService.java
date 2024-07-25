@@ -23,6 +23,8 @@ public class BooksService {
     private UsersRepository usersRepository;
 
     public Books saveBooks(Books books) {
+        books.setBorrowed(false);
+        books.setBorrowedBy(null);
         return booksRepository.save(books);
     }
 
