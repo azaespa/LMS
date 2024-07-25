@@ -80,9 +80,9 @@ class UsersControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Save One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users.id").value(users.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users.name").value(users.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(users.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(users.getName()));
     }
 
     @Test
@@ -94,13 +94,13 @@ class UsersControllerTest {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/users").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Find All Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList", Matchers.hasSize(this.usersList.size())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList[0].id").value("1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList[0].name").value("Rakesh Kumar"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList[1].id").value("2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList[1].name").value("Paul Azanes"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList[2].id").value("3"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.usersList[2].name").value("Jimbo Delfin"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data", Matchers.hasSize(this.usersList.size())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].name").value("Rakesh Kumar"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].id").value("2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].name").value("Paul Azanes"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].id").value("3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].name").value("Jimbo Delfin"));
     }
 
     @Test
@@ -116,9 +116,9 @@ class UsersControllerTest {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/users/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Find One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users.id").value(u1.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users.name").value(u1.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(u1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(u1.getName()));
     }
 
     @Test
@@ -130,6 +130,6 @@ class UsersControllerTest {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/users/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a user with id 1 :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.users").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 }

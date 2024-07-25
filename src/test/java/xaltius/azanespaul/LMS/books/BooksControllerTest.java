@@ -97,11 +97,11 @@ class BooksControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Save One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value(savedBooks.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value(savedBooks.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value(savedBooks.getAuthor()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(savedBooks.getBorrowed()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(savedBooks.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(savedBooks.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.author").value(savedBooks.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowed").value(savedBooks.getBorrowed()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy").isEmpty());
     }
 
     @Test
@@ -111,22 +111,24 @@ class BooksControllerTest {
 
         // When and Then
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/books").accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(this.booksList.size())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value("1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title").value("Title 1 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].author").value("Author 1 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].borrowed").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].borrowedBy").value(IsNull.nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value("2"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("Title 2 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].author").value("Author 2 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].borrowed").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].borrowedBy").value(IsNull.nullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value("3"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].title").value("Title 3 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].author").value("Author 3 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].borrowed").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].borrowedBy").value(IsNull.nullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Find All Success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data", Matchers.hasSize(this.booksList.size())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].title").value("Title 1 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].author").value("Author 1 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].borrowed").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].borrowedBy").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].id").value("2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].title").value("Title 2 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].author").value("Author 2 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].borrowed").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].borrowedBy").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].id").value("3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].title").value("Title 3 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].author").value("Author 3 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].borrowed").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].borrowedBy").isEmpty());
     }
 
     @Test
@@ -138,11 +140,11 @@ class BooksControllerTest {
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/books/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Find One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value("1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value("Title 1 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value("Author 1 Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").value(IsNull.nullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("Title 1 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.author").value("Author 1 Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowed").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy").isEmpty());
     }
 
     @Test
@@ -153,7 +155,8 @@ class BooksControllerTest {
         // When and Then
         this.mockMvc.perform(MockMvcRequestBuilders.get("/api/books/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
     @Test
@@ -182,11 +185,11 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Update One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value("Updated Title Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value("Updated Author Test Case"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("Updated Title Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.author").value("Updated Author Test Case"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowed").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy").isEmpty());
     }
 
     @Test
@@ -208,9 +211,10 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
 
     }
+
     @Test
     void testDeleteBooksByIdSuccess() throws Exception {
         // Given
@@ -221,7 +225,7 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Delete One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
     @Test
@@ -234,7 +238,7 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
     @Test
@@ -271,17 +275,17 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Borrow One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value(borrowedBooks.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value(borrowedBooks.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value(borrowedBooks.getAuthor()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(borrowedBooks.getBorrowed()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy.id").value(borrowedBooks.getBorrowedBy().getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy.name").value(borrowedBooks.getBorrowedBy().getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(borrowedBooks.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(borrowedBooks.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.author").value(borrowedBooks.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowed").value(borrowedBooks.getBorrowed()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy.id").value(borrowedBooks.getBorrowedBy().getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy.name").value(borrowedBooks.getBorrowedBy().getName()));
     }
 
     @Test
-    void testBorrowBooksByBookIdNotFound() throws Exception {
+    void testBorrowBooksByIdBookIdNotFound() throws Exception {
         //Given
         Map<String, Object> usersBody = new HashMap<>();
         usersBody.put("id", 1L);
@@ -303,11 +307,11 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
     @Test
-    void testBorrowBooksByUserIdNotFound() throws Exception {
+    void testBorrowBooksByIdUserIdNotFound() throws Exception {
         //Given
         Map<String, Object> usersBody = new HashMap<>();
         usersBody.put("id", 1L);
@@ -329,7 +333,7 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a user with id 1 :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
     @Test
@@ -355,7 +359,7 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The book with id 1 is already borrowed by another user :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
 
     }
 
@@ -385,12 +389,13 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Returned One Success"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(200))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.id").value(returnedBooks.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.title").value(returnedBooks.getTitle()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.author").value(returnedBooks.getAuthor()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowed").value(returnedBooks.getBorrowed()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books.borrowedBy").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(returnedBooks.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(returnedBooks.getTitle()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.author").value(returnedBooks.getAuthor()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowed").value(returnedBooks.getBorrowed()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.borrowedBy").isEmpty());
     }
+
     @Test
     void testReturnBooksByIdNotFound() throws Exception {
         // Given
@@ -410,6 +415,6 @@ class BooksControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find a book with id 1 :("))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").value(400))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.books").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 }
