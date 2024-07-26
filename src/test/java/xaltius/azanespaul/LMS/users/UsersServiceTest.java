@@ -61,12 +61,14 @@ class UsersServiceTest {
         u.setId(1L);
         u.setName("Test Case");
 
+        BDDMockito.given(usersRepository.save(u)).willReturn(u);
+
         // When
-        usersService.saveUser(u);
+        Users actualUser = usersService.saveUser(u);
 
         // Then
-        Assertions.assertThat(u).isNotNull();
-        Assertions.assertThat(u.getId()).isGreaterThan(0);
+        Assertions.assertThat(actualUser.getId()).isGreaterThan(0);
+        Assertions.assertThat(actualUser.getName()).isEqualTo(u.getName());
         Mockito.verify(usersRepository, Mockito.times(1)).save(u);
     }
 

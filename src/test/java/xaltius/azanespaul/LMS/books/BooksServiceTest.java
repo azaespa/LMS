@@ -76,20 +76,54 @@ class BooksServiceTest {
 
     @Test
     void testSaveBooksSuccess() {
+        // Given=
+        Books savedBooks = new Books();
+        savedBooks.setId(1L);
+        savedBooks.setTitle("Title Test Case");
+        savedBooks.setAuthor("Author Test Case");
+        savedBooks.setBorrowed(false);
+        savedBooks.setBorrowedBy(null);
+
+        BDDMockito.given(booksRepository.save(savedBooks)).willReturn(savedBooks);
+
+        // When
+        Books actualBooks = booksService.saveBooks(savedBooks);
+
+        // Then
+        Assertions.assertThat(actualBooks).isNotNull();
+        Assertions.assertThat(actualBooks.getId()).isGreaterThan(0);
+        Assertions.assertThat(actualBooks.getBorrowed()).isEqualTo(false);
+        Assertions.assertThat(actualBooks.getBorrowedBy()).isNull();
+        Mockito.verify(booksRepository, Mockito.times(1)).save(savedBooks);
+    }
+
+    @Test
+    void testSaveBooksBorrowedIsTrue() {
         // Given
         Books b = new Books();
         b.setId(1L);
         b.setTitle("Title Test Case");
         b.setAuthor("Author Test Case");
-        b.setBorrowed(false);
+        b.setBorrowed(true);
         b.setBorrowedBy(null);
 
+        Books savedBooks = new Books();
+        savedBooks.setId(1L);
+        savedBooks.setTitle("Title Test Case");
+        savedBooks.setAuthor("Author Test Case");
+        savedBooks.setBorrowed(false);
+        savedBooks.setBorrowedBy(null);
+
+        BDDMockito.given(booksRepository.save(b)).willReturn(savedBooks);
+
         // When
-        booksService.saveBooks(b);
+        Books actualBooks = booksService.saveBooks(b);
 
         // Then
-        Assertions.assertThat(b).isNotNull();
-        Assertions.assertThat(b.getId()).isGreaterThan(0);
+        Assertions.assertThat(actualBooks).isNotNull();
+        Assertions.assertThat(actualBooks.getId()).isGreaterThan(0);
+        Assertions.assertThat(actualBooks.getBorrowed()).isEqualTo(false);
+        Assertions.assertThat(actualBooks.getBorrowedBy()).isNull();
         Mockito.verify(booksRepository, Mockito.times(1)).save(b);
     }
 
@@ -248,6 +282,11 @@ class BooksServiceTest {
     @Test
     void testBorrowBooksByBookIdNotFound() {
         // Given
+        Users u = new Users();
+        u.setId(1L);
+        u.setName("Test Case");
+
+        BDDMockito.given(usersRepository.findUsersById(1L)).willReturn(Optional.of(u));
         BDDMockito.given(booksRepository.findBooksById(1L)).willReturn(Optional.empty());
 
         // When
@@ -256,6 +295,7 @@ class BooksServiceTest {
         });
 
         // Then
+        Mockito.verify(usersRepository, Mockito.times(1)).findUsersById(1L);
         Mockito.verify(booksRepository, Mockito.times(1)).findBooksById(1L);
     }
 
